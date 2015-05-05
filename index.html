@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html >
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="vindsiden-map.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Map-->
+<div ng-app="vindsiden-map">
+    <div ng-view></div>
+</div>
+
+<!-- Angular dependencies -->
+<script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+<script src="js/lib/angular.js"></script>
+<script src="js/lib/angular-route.min.js"></script>
+<script src="js/lib/angular-resource.min.js"></script>
+
+<!-- Angular-google-maps dependencies -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+<script src="js/lib/angular-google-maps.min.js"></script>
+<script type='text/javascript' src='js/lib/bluebird.js'></script>
+
+<!-- vindsiden-map dependencies -->
+<script src="js/vindsiden-map.js"></script>
+<script src="js/vindsiden-map-controller.js"></script>
+</body>
+</html>
