@@ -28,7 +28,11 @@ var vindsidenServices = angular.module('vindsidenServices', ['ngResource']);
 vindsidenServices.factory('Stations', ['$resource',
     function($resource){
 
-        return $resource('http://vindsiden.no/api/stations', {}, {
+        var currentDate = new Date();
+
+        var dateString =  currentDate.getFullYear() +'-' + (currentDate.getMonth() + 1) + '-' + currentDate.getUTCDate();
+           //http://vindsiden.no/api/stations/?date=2015-05-06&n=10
+        return $resource('http://vindsiden.no/api/stations' + '?date='+ dateString + '&n=1', {}, {
             query: {method:'GET', isArray:true}
         });
     }]);

@@ -36,14 +36,26 @@ vindsidenControllers.controller('MapController', ['$scope', '$routeParams', 'Sta
 function createMarkers($scope) {
     var createMarkerForStation = function (station) {
 
+        icon = '/img/not_available.png';
+        var direction = 180;
+        if (station.Data[0] != null) {
+            direction = station.Data[0].DirectionAvg + 180;
+            icon = {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 7,
+                rotation: direction
+            };
+        }
+
         var ret = {
             id: station.StationID,
             latitude: station.Latitude,
             longitude: station.Longitude,
             title: station.Name,
             show: false,
-            image: station.Logo,
-            options: { title: station.Name }
+            options: {
+                title: station.Name,
+                icon: icon}
         };
         ret.onClick = function() {
             window.location.href = 'http://vindsiden.no/default.aspx?id=' + station.StationID;
