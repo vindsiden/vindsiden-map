@@ -36,41 +36,87 @@ vindsidenControllers.controller('MapController', ['$scope', '$routeParams', 'Sta
 function createMarkers($scope) {
     var createMarkerForStation = function (station) {
 
-        icon = '/img/not_available.png';
-        var direction = 180;
+
+
+        var img = new Image();
+
         if (station.Data[0] != null) {
-            direction = station.Data[0].DirectionAvg + 180;
-            icon = {
-                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                scale: 7,
-                rotation: direction
-            };
+            vind = station.Data[0].WindAvg;
+            if (vind >= 0 && vind < 6) {
+                icon = '/img/arrow_gray.png';
+            } else if (vind >= 6  && vind < 10) {
+                icon = '/img/arrow_green.png';
+            } else if (vind >= 10) {
+                icon = '/img/arrow_red.png';
+            }
+        } else {
+            icon = '/img/not_available.png';
         }
 
-        var ret = {
-            id: station.StationID,
-            latitude: station.Latitude,
-            longitude: station.Longitude,
-            title: station.Name,
-            show: false,
-            options: {
+        img.onload = function () {
+            canvas = document.createElement("canvas");
+            canvas.width = 50;
+            canvas.height = 50;
+            var context =  canvas.getContext("2d");
+
+            centerX = canvas.width/2;
+            centerY = canvas.height/2;
+
+            var direction = 180;
+            if (station.Data[0] != null) {
+
+
+                direction = parseInt(station.Data[0].DirectionAvg) * Math.PI / 180;
+
+                context.translate(centerX, centerY);
+                context.rotate(direction);
+                context.translate(-centerX, -centerY);
+                context.drawImage(img, 0, 0);
+                context.restore();
+
+                icon = canvas.toDataURL('image/png');
+
+                map = $scope.map;
+
+                google.maps.event.addListener(map, 'zoom_changed', function() {
+                    setTimeout(function() {
+                        var cnt = map.getCenter();
+                        cnt.e+=0.000001;
+                        map.panTo(cnt);
+                        cnt.e-=0.000001;
+                        map.panTo(cnt);
+                    },400);
+                });
+            }
+
+
+            var ret = {
+                id: station.StationID,
+                latitude: station.Latitude,
+                longitude: station.Longitude,
                 title: station.Name,
-                icon: icon}
-        };
-        ret.onClick = function() {
-            window.location.href = 'http://vindsiden.no/default.aspx?id=' + station.StationID;
-            //Window disabled
-            //ret.show = !ret.show;
-        };
-        return ret;
+                show: false,
+                options: {
+                    title: station.Name,
+                    icon: {
+                        url: icon
+                    }}
+            };
+            ret.onClick = function() {
+                window.location.href = 'http://vindsiden.no/default.aspx?id=' + station.StationID;
+                //Window disabled
+                //ret.show = !ret.show;
+            };
+            markers.push(ret);
+        }
+        img.src = icon;
     };
 
     var markers = [];
     angular.forEach($scope.stations , function(station, key) {
         if (station.Show){
-            markers.push(createMarkerForStation(station))
+            createMarkerForStation(station);
         }
     });
     $scope.stationMarkers = markers;
 };
-
