@@ -1,4 +1,9 @@
 
 .angular-google-map-container { height: 600px; width: 600px; }
 
+a:link      { color: #000000; }
+a:visited   { color: #000000; }
+a:hover     { color: #FF0000; }
+a:active    { color: #000000; }
+
 

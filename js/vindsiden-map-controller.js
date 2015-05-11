@@ -3,7 +3,7 @@
  */
 vindsidenControllers.controller('MapController', ['$scope', '$routeParams', 'Stations', function($scope, $routeParams, Stations) {
     $scope.stations = Stations.query();
-
+    
     $scope.map = {
         center: {
             latitude: 65,
@@ -66,7 +66,7 @@ function createMarkers($scope) {
             if (station.Data[0] != null) {
 
 
-                direction = parseInt(station.Data[0].DirectionAvg) * Math.PI / 180;
+                direction = parseInt(station.Data[0].DirectionAvg) + 180 * Math.PI / 180;
 
                 context.translate(centerX, centerY);
                 context.rotate(direction);
@@ -78,20 +78,48 @@ function createMarkers($scope) {
 
                 map = $scope.map;
 
-                google.maps.event.addListener(map, 'zoom_changed', function() {
-                    setTimeout(function() {
-                        var cnt = map.getCenter();
-                        cnt.e+=0.000001;
-                        map.panTo(cnt);
-                        cnt.e-=0.000001;
-                        map.panTo(cnt);
-                    },400);
-                });
             }
 
+            logo = ""
+            if (station.Logo.length > 0) {
+                logo ='http://vindsiden.no/img/' + station.Logo;
+            }
+
+            avg = '';
+            gust = '';
+            temp = '';
+            owner = '';
+            min = '';
+            dir = '';
+
+            owner = station.LogoText;
+            region = station.Region;
+            city = station.City;
+            text = station.Text
+            ownerURL = station.LogoUrl;
+
+            if (station.Data[0] != null) {
+                data = station.Data[0];
+                avg = Math.round(data.WindAvg * 10) / 10;
+                gust = Math.round(data.WindMax * 10) / 10;
+                min = Math.round(data.WindMin * 10) / 10;
+                temp = Math.round(data.Temperature1 * 10) / 10;
+                dir = data.DirectionAvg;
+            }
 
             var ret = {
                 id: station.StationID,
+                logo: logo,
+                avg:avg,
+                gust:gust,
+                min:min,
+                temp:temp,
+                owner: owner ,
+                ownerURL: ownerURL,
+                dir: dir,
+                region: region,
+                city: city,
+                text: text,
                 latitude: station.Latitude,
                 longitude: station.Longitude,
                 title: station.Name,
@@ -103,8 +131,11 @@ function createMarkers($scope) {
                     }}
             };
             ret.onClick = function() {
-                window.location.href = 'http://vindsiden.no/default.aspx?id=' + station.StationID;
+                //window.location.href = 'http://vindsiden.no/default.aspx?id=' + station.StationID;
                 //Window disabled
+                //if (!ret.show) {
+                    //ret.show = true;
+                //}
                 //ret.show = !ret.show;
             };
             markers.push(ret);
@@ -120,3 +151,6 @@ function createMarkers($scope) {
     });
     $scope.stationMarkers = markers;
 };
+
+
+

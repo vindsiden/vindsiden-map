@@ -1,10 +1,28 @@
 <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
     <ui-gmap-markers models="stationMarkers" coords="'self'" click="'onClick'" options="'options'">
         SOME TEXT
-        <!--ui-gmap-windows show="show">
+        <ui-gmap-windows show="show">
             <div ng-non-bindable>
-                <a href="#station/{{id}}"> {{title}}
+                <h3>
+                <a href="http://vindsiden.no/default.aspx?id={{id}}"> {{title}} - {{city}} - {{region}}</a>
+                </h3>
+                <p>
+                    {{text}}
+                </p>
+                <p>
+                    <b>Vindstyrke/Gust/Minimum:</b> {{avg}} / {{gust}} / {{min}} <br />
+                    <b>Temperatur:</b> {{temp}} <br />
+                    <b>Vindretning:</b> {{dir}}
+                </p><a href="http://vindsiden.no/default.aspx?id={{id}}">
+                <center>
+                <img src="{{logo}}" />
+                </center>
+                </a>
+                <br />
+                <a href="{{ownerURL}}">
+                <i>{{owner}}</i>
+
             </div>
-        </ui-gmap-windows-->
+        </ui-gmap-windows>
     </ui-gmap-markers>
 </ui-gmap-google-map>
