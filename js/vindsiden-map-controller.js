@@ -3,7 +3,7 @@
  */
 vindsidenControllers.controller('MapController', ['$scope', '$routeParams', 'Stations', function($scope, $routeParams, Stations) {
     $scope.stations = Stations.query();
-    
+
     $scope.map = {
         center: {
             latitude: 65,
@@ -35,25 +35,22 @@ vindsidenControllers.controller('MapController', ['$scope', '$routeParams', 'Sta
 
 function createMarkers($scope) {
     var createMarkerForStation = function (station) {
-
-
-
-        var img = new Image();
+        stationImage = new Image();
 
         if (station.Data[0] != null) {
             vind = station.Data[0].WindAvg;
             if (vind >= 0 && vind < 6) {
-                icon = '/img/arrow_gray.png';
+                stationImageUrl = '/img/arrow_gray.png';
             } else if (vind >= 6  && vind < 10) {
-                icon = '/img/arrow_green.png';
+                stationImageUrl = '/img/arrow_green.png';
             } else if (vind >= 10) {
-                icon = '/img/arrow_red.png';
+                stationImageUrl = '/img/arrow_red.png';
             }
         } else {
-            icon = '/img/not_available.png';
+            stationImageUrl = '/img/not_available.png';
         }
 
-        img.onload = function () {
+        stationImage.onload = function () {
             canvas = document.createElement("canvas");
             canvas.width = 50;
             canvas.height = 50;
@@ -62,22 +59,21 @@ function createMarkers($scope) {
             centerX = canvas.width/2;
             centerY = canvas.height/2;
 
-            var direction = 180;
             if (station.Data[0] != null) {
-
-
-                direction = parseInt(station.Data[0].DirectionAvg) + 180 * Math.PI / 180;
+                direction = station.Data[0].DirectionAvg;
 
                 context.translate(centerX, centerY);
-                context.rotate(direction);
+                context.rotate((direction + 180) * 0.0174532925);
                 context.translate(-centerX, -centerY);
-                context.drawImage(img, 0, 0);
+                context.drawImage(this, 0, 0);
                 context.restore();
 
-                icon = canvas.toDataURL('image/png');
+                rotatedImage = canvas.toDataURL('image/png');
 
                 map = $scope.map;
 
+            } else {
+                rotatedImage = this.src;
             }
 
             logo = ""
@@ -109,6 +105,7 @@ function createMarkers($scope) {
 
             var ret = {
                 id: station.StationID,
+                showData: station.Data != null,
                 logo: logo,
                 avg:avg,
                 gust:gust,
@@ -127,7 +124,7 @@ function createMarkers($scope) {
                 options: {
                     title: station.Name,
                     icon: {
-                        url: icon
+                        url: rotatedImage
                     }}
             };
             ret.onClick = function() {
@@ -140,7 +137,8 @@ function createMarkers($scope) {
             };
             markers.push(ret);
         }
-        img.src = icon;
+        stationImage.src = stationImageUrl;
+
     };
 
     var markers = [];
