@@ -1,27 +1,27 @@
 <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
-    <ui-gmap-markers models="stationMarkers" coords="'self'" click="'onClick'" options="'options'">
+    <ui-gmap-markers models="markers" coords="'self'" click="'onClick'" options="'options'">
         <ui-gmap-windows show="show">
             <div ng-non-bindable>
                 <h3>
-                    <a href="http://vindsiden.no/default.aspx?id={{id}}"> {{title}} - {{city}} - {{region}}</a>
+                    <a href="http://vindsiden.no/default.aspx?id={{id}}"> {{station.Name}} - {{station.City}} - {{station.Region}}</a>
                 </h3>
 
                 <p>
-                    {{text}}
+                    {{station.Text}}
                 </p>
 
                 <p>
                     <b>Vindstyrke/Gust/Minimum:</b> {{avg}} / {{gust}} / {{min}} <br/>
                     <b>Temperatur:</b> {{temp}} <br/>
-                    <b>Vindretning:</b> {{dir}}
+                    <b>Vindretning:</b> {{data.DirectionAvg}}
                 </p>
                 <a href="http://vindsiden.no/default.aspx?id={{id}}">
                     <center>
-                        <img src="{{logo}}"/>
+                        <img src="http://vindsiden.no/img/{{station.Logo}}"/>
                     </center>
                 </a>
-                <br/>
-                <a href="{{ownerURL}}"><i>{{owner}}</i></a>
+                <a href="{{ownerURL}}"><i>{{station.LogoText}}</i></a>
+                <br />
             </div>
         </ui-gmap-windows>
     </ui-gmap-markers>

@@ -3,16 +3,14 @@
  *
  * Created by erik.mohn on 12.10.2014.
  */
-var vindsiden = angular.module('vindsiden-map',
+var vindsidenMap = angular.module('vindsiden-map',
     [
         'ngRoute',
         'ngResource',
-        'vindsidenControllers',
-        'vindsidenServices',
         'uiGmapgoogle-maps'
     ]);
 
-vindsiden.config(['$routeProvider',
+vindsidenMap.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
             when('/', {
@@ -21,20 +19,25 @@ vindsiden.config(['$routeProvider',
             });
     }]);
 
-var vindsidenControllers = angular.module('vindsidenControllers', []);
+vindsidenMap.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.17',
+        libraries: 'weather,geometry,visualization'
+    });
+})
 
-var vindsidenServices = angular.module('vindsidenServices', ['ngResource']);
-
-vindsidenServices.factory('Stations', ['$resource',
-    function($resource){
-
-        var currentDate = new Date();
-
-        var dateString =  currentDate.getFullYear() +'-' + (currentDate.getMonth() + 1) + '-' + currentDate.getUTCDate();
-           //http://vindsiden.no/api/stations/?date=2015-05-06&n=10
-        return $resource('http://vindsiden.no/api/stations' + '?date='+ dateString + '&n=1', {}, {
-            query: {method:'GET', isArray:true}
-        });
-    }]);
-
-
+vindsidenMap.factory('Stations', function($http) {
+    var Stations = {
+        async: function() {
+            var currentDate = new Date();
+            var date =  currentDate.getFullYear() +'-' + (currentDate.getMonth() + 1) + '-' + currentDate.getUTCDate();
+            var promise = $http.get('http://vindsiden.no/api/stations?date='+ date + '&n=1').then(function (response) {
+                console.log(response);
+                return response.data;
+            });
+            return promise;
+        }
+    };
+    return Stations;
+});
