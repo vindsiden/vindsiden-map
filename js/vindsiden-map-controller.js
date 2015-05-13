@@ -32,13 +32,13 @@ function createMarkers(stations, $scope) {
 };
 
 function createMarker(station, $scope) {
-    stationImage = new Image();
-    stationImage.src = identifyIconImageUrl(station.Data[0]);
+    markerIcon = new Image();
+    markerIcon.src = identifyIconUrl(station.Data[0]);
 
-    stationImage.onload = function () {
+    markerIcon.onload = function () {
         data = station.Data[0];
         anyData = data != null
-        markerIcon = anyData ? createRotatedIconImage(this, data) : this.src;
+        markerIcon = anyData ? createRotatedIcon(this, data) : this.src;
 
         marker = {
             id: station.StationID,
@@ -64,7 +64,14 @@ function createMarker(station, $scope) {
     }
 };
 
-function createRotatedIconImage(img, data) {
+function identifyIconUrl(data) {
+    return (data == null)
+        ? '/img/not_available.png'  : (data.WindAvg >= 0 && data.WindAvg < 6)
+        ? '/img/arrow_gray.png'     : (data.WindAvg >= 6 && data.WindAvg < 10)
+        ? '/img/arrow_green.png'    : '/img/arrow_red.png'
+}
+
+function createRotatedIcon(img, data) {
     canvas = document.createElement("canvas");
     context = canvas.getContext("2d");
     canvas.width = 50;
@@ -79,13 +86,6 @@ function createRotatedIconImage(img, data) {
     context.restore();
 
     return canvas.toDataURL('image/png');
-}
-
-function identifyIconImageUrl(data) {
-    return (data == null)
-        ? '/img/not_available.png'  : (data.WindAvg >= 0 && data.WindAvg < 6)
-        ? '/img/arrow_gray.png'     : (data.WindAvg >= 6 && data.WindAvg < 10)
-        ? '/img/arrow_green.png'    : '/img/arrow_red.png'
 }
 
 function round(number) {
