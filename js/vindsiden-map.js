@@ -11,7 +11,7 @@ var vindsidenMap = angular.module('vindsiden-map',
     ]);
 
 vindsidenMap.config(['$routeProvider',
-    function($routeProvider) {
+    function ($routeProvider) {
         $routeProvider.
             when('/', {
                 templateUrl: 'map.html',
@@ -19,7 +19,7 @@ vindsidenMap.config(['$routeProvider',
             });
     }]);
 
-vindsidenMap.config(function(uiGmapGoogleMapApiProvider) {
+vindsidenMap.config(function (uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
         //    key: 'your api key',
         v: '3.17',
@@ -27,13 +27,13 @@ vindsidenMap.config(function(uiGmapGoogleMapApiProvider) {
     });
 })
 
-vindsidenMap.factory('Stations', function($http) {
+vindsidenMap.factory('Stations', function ($http) {
     var Stations = {
-        async: function() {
+        async: function () {
             var currentDate = new Date();
-            var date =  currentDate.getFullYear() +'-' + (currentDate.getMonth() + 1) + '-' + currentDate.getUTCDate();
-            var promise = $http.get('http://vindsiden.no/api/stations?date='+ date + '&n=1').then(function (response) {
-                console.log(response);
+            var date = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getUTCDate();
+            var promise = $http.get('http://vindsiden.no/api/stations?date=' + date + '&n=1').then(function (response) {
+                //console.log(response);
                 return response.data;
             });
             return promise;

@@ -1,27 +1,22 @@
-<ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
-    <ui-gmap-markers models="markers" coords="'self'" click="'onClick'" options="'options'">
-        <ui-gmap-windows show="show">
+<ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" control="control">
+    <ui-gmap-markers models="markers" coords="'self'"  options="'options'">
+        <ui-gmap-windows show="'show'">
             <div ng-non-bindable>
                 <h3>
-                    <a href="http://vindsiden.no/default.aspx?id={{id}}"> {{station.Name}} - {{station.City}} - {{station.Region}}</a>
+                    <a href="http://vindsiden.no/default.aspx?id={{id}}"> {{station.Name}} - {{station.City}} -
+                        {{station.Region}}</a>
                 </h3>
-
-                <p>
                     {{station.Text}}
-                </p>
-
+                <br>
+                <b>Vindstyrke/Gust/Minimum:</b> {{avg}} / {{gust}} / {{min}} <br/>
+                <b>Temperatur:</b> {{temp}} <br/>
+                <b>Vindretning:</b> {{data.DirectionAvg}}
                 <p>
-                    <b>Vindstyrke/Gust/Minimum:</b> {{avg}} / {{gust}} / {{min}} <br/>
-                    <b>Temperatur:</b> {{temp}} <br/>
-                    <b>Vindretning:</b> {{data.DirectionAvg}}
+                    <a href="http://vindsiden.no/default.aspx?id={{id}}">
+                        <img src="http://vindsiden.no/img/{{station.Logo}}"/><br/>
+                    </a>
+                    <a href="{{ownerURL}}"><i>{{station.LogoText}}</i></a>
                 </p>
-                <a href="http://vindsiden.no/default.aspx?id={{id}}">
-                    <center>
-                        <img src="http://vindsiden.no/img/{{station.Logo}}"/>
-                    </center>
-                </a>
-                <a href="{{ownerURL}}"><i>{{station.LogoText}}</i></a>
-                <br />
             </div>
         </ui-gmap-windows>
     </ui-gmap-markers>

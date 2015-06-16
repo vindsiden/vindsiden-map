@@ -1,9 +1,10 @@
 /**
  * Created by erik.mohn on 21.10.2014.
  */
-vindsidenMap.controller('MapController', ['$scope', 'Stations', function ($scope, Stations) {
-    $scope.markers = [];
 
+vindsidenMap.controller('MapController', ['$scope', 'Stations','uiGmapIsReady', function ($scope, Stations, IsReady) {
+    $scope.markers = [];
+    $scope.control = {};
     $scope.map = {
         center: {
             latitude: 65,
@@ -12,15 +13,13 @@ vindsidenMap.controller('MapController', ['$scope', 'Stations', function ($scope
         zoom: 4
     };
 
-    $scope.$watch(function () {
-        return $scope.map.bounds;
-    }, function (nv, ov) {
-        if ($scope.markers.length == 0)
-            Stations.async().then(function (response) {
-                createMarkers(response, $scope);
-            });
-    }, true);
+    IsReady.promise().then(function(maps) {
+        Stations.async().then(function (response) {
 
+            createMarkers(response, $scope);
+            refresh($scope)
+        });
+    });
 }]);
 
 function createMarkers(stations, $scope) {
@@ -32,22 +31,21 @@ function createMarkers(stations, $scope) {
 };
 
 function createMarker(station, $scope) {
-    markerIcon = new Image();
+    var markerIcon = new Image();
     markerIcon.src = identifyIconUrl(station.Data[0]);
-
     markerIcon.onload = function () {
-        data = station.Data[0];
-        anyData = data != null
-        markerIcon = anyData ? createRotatedIcon(this, data) : this.src;
+        var data = station.Data[0];
+        var anyData = data != null
+        var markerIcon = anyData ? createRotatedIcon(this, data) : this.src;
 
-        marker = {
+        var marker = {
             id: station.StationID,
             station: station,
             data: data,
-            avg: anyData ? round(data.WindAvg) : '',
-            gust: anyData ? round(data.WindMax) : '',
-            min: anyData ? round(data.WindMin) : '',
-            temp: anyData ? round(data.Temperature1) : '',
+            avg: anyData ? data.WindAvg.toFixed(1) : '',
+            gust: anyData ? data.WindMax.toFixed(1) : '',
+            min: anyData ? data.WindMin.toFixed(1) : '',
+            temp: anyData ? data.Temperature1.toFixed(1) : '',
             latitude: station.Latitude,
             longitude: station.Longitude,
             show: false,
@@ -66,18 +64,18 @@ function createMarker(station, $scope) {
 
 function identifyIconUrl(data) {
     return (data == null)
-        ? '/img/not_available.png'  : (data.WindAvg >= 0 && data.WindAvg < 6)
-        ? '/img/arrow_gray.png'     : (data.WindAvg >= 6 && data.WindAvg < 10)
-        ? '/img/arrow_green.png'    : '/img/arrow_red.png'
+        ? '/img/not_available.png' : (data.WindAvg >= 0 && data.WindAvg < 6)
+        ? '/img/arrow_gray.png' : (data.WindAvg >= 6 && data.WindAvg < 10)
+        ? '/img/arrow_green.png' : '/img/arrow_red.png'
 }
 
 function createRotatedIcon(img, data) {
-    canvas = document.createElement("canvas");
-    context = canvas.getContext("2d");
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
     canvas.width = 50;
     canvas.height = 50;
-    centerX = canvas.width / 2;
-    centerY = canvas.height / 2;
+    var centerX = canvas.width / 2;
+    var centerY = canvas.height / 2;
 
     context.translate(centerX, centerY);
     context.rotate((data.DirectionAvg + 180) * 0.0174532925);
@@ -88,6 +86,11 @@ function createRotatedIcon(img, data) {
     return canvas.toDataURL('image/png');
 }
 
-function round(number) {
-    return Math.round(number * 10) / 10
-}
+/**
+ * Need to refresh the map after markers are added, otherwise the markers
+ * would only show once the map is touched by the user
+ * @param $scope
+ */
+function refresh($scope) {
+    $scope.map.center.latitude = 65.000001;
+};
